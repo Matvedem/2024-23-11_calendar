@@ -14,8 +14,9 @@ class Calendar(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setFixedSize(580, 540)
+        self.setWindowTitle('Календарь')
         uic.loadUi('D:\\Project\\UI\\Calendar.ui', self)
-        self.SecondWindowButton = QPushButton("Кнопка", self)
+        self.SecondWindowButton = QPushButton("Заметки", self)
         self.SecondWindowButton.clicked.connect(self.open_window)
         self.QCalendar = QCalendarWidget(self)
         self.QCalendar.move(0, 60)
