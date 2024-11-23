@@ -26,10 +26,6 @@ class Calendar(QMainWindow):
         global_date = self.QCalendar.selectedDate().toPyDate()
         self.window_second = Notes()
         self.window_second.show()
-        messageBox = QMessageBox()
-        messageBox.setText(f"date selected {global_date}")
-        print(global_date)
-        messageBox.exec()
 
 
 class Notes(QDialog):
