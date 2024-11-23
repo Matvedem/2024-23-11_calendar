@@ -13,7 +13,7 @@ class Calendar(QMainWindow):
         self.btn = QPushButton("Кнопка", self)
         self.btn.clicked.connect(self.open_window)
 
-
+ 
     def open_window(self):
         self.wind = Notes()
         self.wind.show()
