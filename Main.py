@@ -6,7 +6,9 @@ from PyQt6.QtCore import *
 import sqlite3
 import sys
 import datetime
+
 global_date = ""
+
 
 class Calendar(QMainWindow):
     def __init__(self):
@@ -30,7 +32,6 @@ class Calendar(QMainWindow):
         messageBox.exec()
 
 
-
 class Notes(QDialog):
     def __init__(self):
         super().__init__()
@@ -39,7 +40,8 @@ class Notes(QDialog):
         uic.loadUi('Notes.ui', self)
         self.AddTaskButton = QPushButton("Добавить Заметку", self)
         self.DeleteTaskButton = QPushButton("Убрать Заметку", self)
-        self.AddTaskButton.clicked.connect(self.ConnectedQList)
+        self.AddTaskButton.clicked.connect(self.Connecting_QList_AddTaskButton)
+        self.DeleteTaskButton.clicked.connect(self.DeletingInQlist)
         self.QTaskList = QListWidget(self)
         self.QTextLine = QLineEdit(self)
         self.AddTaskButton.move(380, 190)
@@ -50,20 +52,21 @@ class Notes(QDialog):
         self.QTaskList.resize(381, 181)
         self.DeleteTaskButton.resize(221, 161)
         self.DeleteTaskButton.move(380, 240)
-        tl = self.readdb()
+        tl = self.ReadingDataBase()
         for t in tl:
             self.QTaskList.addItem(t)
 
-    def ConnectedQList(self):
-        if self.QTextLine.text():
-            self.QTaskList.addItem(QListWidgetItem(self.QTextLine.text()))
-            # self.saveChanges(add2list=QTextLine.text(), , )
+    def Connecting_QList_AddTaskButton(self):
+        LineText = self.QTextLine.text()
+        if LineText:
+            self.QTaskList.addItem(QListWidgetItem(LineText))
+            self.SavingChanges_In_Qlist(LineText)
         else:
             messageBox = QMessageBox()
             messageBox.setText("Ошибка: Пустая Строка")
             messageBox.exec()
 
-    def readdb(self):
+    def ReadingDataBase(self):
         date = self.myselecteddate
         db = sqlite3.connect("D:\\Project\\mydata.db")
         cursor = db.cursor()
@@ -77,12 +80,22 @@ class Notes(QDialog):
             tasklist.append(result[0])
         return tasklist
 
-    def saveChanges(add2list, tasklist, date):
+    def SavingChanges_In_Qlist(self, add2list):
         db = sqlite3.connect("D:\\Project\\mydata.db")
         cursor = db.cursor()
-        tasklist.append(add2list)
         query = "INSERT INTO tasks(task, date) VALUES (?,?)"
-        row = (add2list, date)
+        row = (add2list, self.myselecteddate)
+        cursor.execute(query, row)
+        db.commit()
+
+    def DeletingInQlist(self):
+        item = self.QTaskList.currentItem()
+        mydate = self.myselecteddate
+        ItemText = item.text()
+        db = sqlite3.connect("D:\\Project\\mydata.db")
+        cursor = db.cursor()
+        query = "DELETE FROM tasks WHERE task = ? AND date = ?;"
+        row = (ItemText, mydate)
         cursor.execute(query, row)
         db.commit()
 
