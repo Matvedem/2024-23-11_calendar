@@ -14,7 +14,7 @@ class Calendar(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setFixedSize(580, 540)
-        uic.loadUi('Calendar.ui', self)
+        uic.loadUi('D:\\Project\\UI\\Calendar.ui', self)
         self.SecondWindowButton = QPushButton("Кнопка", self)
         self.SecondWindowButton.clicked.connect(self.open_window)
         self.QCalendar = QCalendarWidget(self)
@@ -24,8 +24,8 @@ class Calendar(QMainWindow):
     def open_window(self):
         global global_date
         global_date = self.QCalendar.selectedDate().toPyDate()
-        self.wind = Notes()
-        self.wind.show()
+        self.window_second = Notes()
+        self.window_second.show()
         messageBox = QMessageBox()
         messageBox.setText(f"date selected {global_date}")
         print(global_date)
@@ -35,9 +35,9 @@ class Calendar(QMainWindow):
 class Notes(QDialog):
     def __init__(self):
         super().__init__()
-        self.myselecteddate = global_date.strftime("%Y-%m-%d")
+        self.selecteddate = global_date.strftime("%Y-%m-%d")
         self.setFixedSize(600, 400)
-        uic.loadUi('Notes.ui', self)
+        uic.loadUi('D:\\Project\\UI\\Notes.ui', self)
         self.AddTaskButton = QPushButton("Добавить Заметку", self)
         self.DeleteTaskButton = QPushButton("Убрать Заметку", self)
         self.AddTaskButton.clicked.connect(self.Connecting_QList_AddTaskButton)
@@ -67,8 +67,8 @@ class Notes(QDialog):
             messageBox.exec()
 
     def ReadingDataBase(self):
-        date = self.myselecteddate
-        db = sqlite3.connect("D:\\Project\\mydata.db")
+        date = self.selecteddate
+        db = sqlite3.connect("D:\\Project\\DataBase\\mydata.db")
         cursor = db.cursor()
 
         query = "SELECT task FROM tasks WHERE date = ?"
@@ -81,21 +81,21 @@ class Notes(QDialog):
         return tasklist
 
     def SavingChanges_In_Qlist(self, add2list):
-        db = sqlite3.connect("D:\\Project\\mydata.db")
+        db = sqlite3.connect("D:\\Project\\DataBase\\mydata.db")
         cursor = db.cursor()
         query = "INSERT INTO tasks(task, date) VALUES (?,?)"
-        row = (add2list, self.myselecteddate)
+        row = (add2list, self.selecteddate)
         cursor.execute(query, row)
         db.commit()
 
     def DeletingInQlist(self):
         item = self.QTaskList.currentItem()
-        mydate = self.myselecteddate
+        date = self.selecteddate
         ItemText = item.text()
-        db = sqlite3.connect("D:\\Project\\mydata.db")
+        db = sqlite3.connect("D:\\Project\\DataBase\\mydata.db")
         cursor = db.cursor()
         query = "DELETE FROM tasks WHERE task = ? AND date = ?;"
-        row = (ItemText, mydate)
+        row = (ItemText, date)
         cursor.execute(query, row)
         db.commit()
 
