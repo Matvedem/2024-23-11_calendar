@@ -49,8 +49,10 @@ class Notes(QDialog):
         self.QTextLine.resize(381, 51)
         self.QTaskList.resize(381, 181)
         self.DeleteTaskButton.resize(221, 161)
-
         self.DeleteTaskButton.move(380, 240)
+        tl = self.readdb()
+        for t in tl:
+            self.QTaskList.addItem(t)
 
     def ConnectedQList(self):
         if self.QTextLine.text():
@@ -61,17 +63,18 @@ class Notes(QDialog):
             messageBox.setText("Ошибка: Пустая Строка")
             messageBox.exec()
 
-    def readdb(date):
+    def readdb(self):
+        date = self.myselecteddate
         db = sqlite3.connect("D:\\Project\\mydata.db")
         cursor = db.cursor()
 
         query = "SELECT task FROM tasks WHERE date = ?"
-        row = (date)
+        row = (date,)
         results = cursor.execute(query, row).fetchall()
         tasklist = []
         for result in results:
-            print(result)
-            tasklist.append(result)
+            print(result[0])
+            tasklist.append(result[0])
         return tasklist
 
     def saveChanges(add2list, tasklist, date):
