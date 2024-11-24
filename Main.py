@@ -97,19 +97,17 @@ class Notes(QDialog):
             row = (itemtext, date)
             cursor.execute(query, row)
             db.commit()
+
             self.task_list.clear()
+
             date = self.selecteddate
             db = sqlite3.connect('D:\\Project\\DataBase\\mydata.db')
             cursor = db.cursor()
-
             query = 'SELECT task FROM tasks WHERE date = ?'
             row = (date,)
             results = cursor.execute(query, row).fetchall()
-            tasklist = []
             for result in results:
-                print(result[0])
-                tasklist.append(result[0])
-            return tasklist
+                self.task_list.addItem(result[0])
         else:
             messageBox = QMessageBox()
             messageBox.setText('Ошибка: в списке не выбрана строка для удаления')
