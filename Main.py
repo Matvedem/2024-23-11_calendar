@@ -66,7 +66,7 @@ class Notes(QDialog):
 
     def reading_data_base(self):
         date = self.selecteddate
-        db = sqlite3.connect('D:\\Project\\DataBase\\mydata.db')
+        db = sqlite3.connect('D:\\Project\\DataBase\\mydata_old.db')
         cursor = db.cursor()
 
         query = 'SELECT task FROM tasks WHERE date = ?'
@@ -78,7 +78,7 @@ class Notes(QDialog):
         return tasklist
 
     def saving_changes_in_qlist(self, add2list):
-        db = sqlite3.connect('D:\\Project\\DataBase\\mydata.db')
+        db = sqlite3.connect('D:\\Project\\DataBase\\mydata_old.db')
         cursor = db.cursor()
         query = 'INSERT INTO tasks(task, date) VALUES (?,?)'
         row = (add2list, self.selecteddate)
@@ -91,7 +91,7 @@ class Notes(QDialog):
 
             date = self.selecteddate
             itemtext = item.text()
-            db = sqlite3.connect('D:\\Project\\DataBase\\mydata.db')
+            db = sqlite3.connect('D:\\Project\\DataBase\\mydata_old.db')
             cursor = db.cursor()
             query = 'DELETE FROM tasks WHERE task = ? AND date = ?;'
             row = (itemtext, date)
@@ -101,7 +101,7 @@ class Notes(QDialog):
             self.task_list.clear()
 
             date = self.selecteddate
-            db = sqlite3.connect('D:\\Project\\DataBase\\mydata.db')
+            db = sqlite3.connect('D:\\Project\\DataBase\\mydata_old.db')
             cursor = db.cursor()
             query = 'SELECT task FROM tasks WHERE date = ?'
             row = (date,)
