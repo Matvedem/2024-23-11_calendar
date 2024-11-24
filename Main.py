@@ -7,7 +7,7 @@ import sqlite3
 import sys
 import datetime
 
-global_date = ""
+global_date = ''
 
 
 class Calendar(QMainWindow):
@@ -16,7 +16,7 @@ class Calendar(QMainWindow):
         self.setFixedSize(580, 540)
         self.setWindowTitle('Календарь')
         uic.loadUi('D:\\Project\\UI\\Calendar.ui', self)
-        self.second_window_button = QPushButton("Заметки", self)
+        self.second_window_button = QPushButton('Заметки', self)
         self.second_window_button.clicked.connect(self.open_window)
         self.q_calendar = QCalendarWidget(self)
         self.q_calendar.move(0, 60)
@@ -32,77 +32,77 @@ class Calendar(QMainWindow):
 class Notes(QDialog):
     def __init__(self):
         super().__init__()
-        self.selecteddate = global_date.strftime("%Y-%m-%d")
+        self.selecteddate = global_date.strftime('%Y-%m-%d')
         self.setFixedSize(600, 400)
         uic.loadUi('D:\\Project\\UI\\Notes.ui', self)
-        self.add_task_button = QPushButton("Добавить Заметку", self)
-        self.delete_task_button = QPushButton("Убрать Заметку", self)
-        self.add_task_button.clicked.connect(self.connecting_q_list_with_add_task_button())
-        self.delete_task_button.clicked.connect(self.deleting_in_qlist)
+        self.add_note_button = QPushButton('Добавить Заметку', self)
+        self.delete_note_button = QPushButton('Убрать Заметку', self)
+        self.add_note_button.clicked.connect(self.add_note_button_pressed)
+        self.delete_note_button.clicked.connect(self.delete_note_button_pressed)
         self.task_list = QListWidget(self)
         self.text_line = QLineEdit(self)
-        self.add_task_button.move(380, 190)
-        self.add_task_button.resize(221, 51)
+        self.add_note_button.move(380, 190)
+        self.add_note_button.resize(221, 51)
         self.task_list.move(0, 240)
         self.text_line.move(0, 190)
         self.text_line.resize(381, 51)
         self.task_list.resize(381, 181)
-        self.delete_task_button.resize(221, 161)
-        self.delete_task_button.move(380, 240)
+        self.delete_note_button.resize(221, 161)
+        self.delete_note_button.move(380, 240)
         tl = self.reading_data_base()
         for t in tl:
             self.task_list.addItem(t)
 
-    def connecting_q_list_with_add_task_button(self):
+    def add_note_button_pressed(self):
         linetext = self.text_line.text()
         if linetext:
             self.task_list.addItem(QListWidgetItem(linetext))
             self.saving_changes_in_qlist(linetext)
+            self.text_line.setText('')
         else:
             messageBox = QMessageBox()
-            messageBox.setText("Ошибка: пустая строка")
+            messageBox.setText('Ошибка: пустая строка')
             messageBox.exec()
 
     def reading_data_base(self):
         date = self.selecteddate
-        db = sqlite3.connect("D:\\Project\\DataBase\\mydata.db")
+        db = sqlite3.connect('D:\\Project\\DataBase\\mydata.db')
         cursor = db.cursor()
 
-        query = "SELECT task FROM tasks WHERE date = ?"
+        query = 'SELECT task FROM tasks WHERE date = ?'
         row = (date,)
         results = cursor.execute(query, row).fetchall()
         tasklist = []
         for result in results:
-            print(result[0])
             tasklist.append(result[0])
         return tasklist
 
     def saving_changes_in_qlist(self, add2list):
-        db = sqlite3.connect("D:\\Project\\DataBase\\mydata.db")
+        db = sqlite3.connect('D:\\Project\\DataBase\\mydata.db')
         cursor = db.cursor()
-        query = "INSERT INTO tasks(task, date) VALUES (?,?)"
+        query = 'INSERT INTO tasks(task, date) VALUES (?,?)'
         row = (add2list, self.selecteddate)
         cursor.execute(query, row)
         db.commit()
 
-    def deleting_in_qlist(self):
+    def delete_note_button_pressed(self):
         item = self.task_list.currentItem()
         if item is not None:
 
             date = self.selecteddate
             itemtext = item.text()
-            db = sqlite3.connect("D:\\Project\\DataBase\\mydata.db")
+            db = sqlite3.connect('D:\\Project\\DataBase\\mydata.db')
             cursor = db.cursor()
-            query = "DELETE FROM tasks WHERE task = ? AND date = ?;"
+            query = 'DELETE FROM tasks WHERE task = ? AND date = ?;'
             row = (itemtext, date)
             cursor.execute(query, row)
             db.commit()
             self.task_list.clear()
             date = self.selecteddate
-            db = sqlite3.connect("D:\\Project\\DataBase\\mydata.db")
+            db = sqlite3.connect('D:\\Project\\DataBase\\mydata.db')
             cursor = db.cursor()
 
-            query = "SELECT task FROM tasks WHERE date = ?"
+            query = 'SELECT task FROM tasks WHERE date = ?'
             row = (date,)
             results = cursor.execute(query, row).fetchall()
             tasklist = []
@@ -112,7 +112,7 @@ class Notes(QDialog):
             return tasklist
         else:
             messageBox = QMessageBox()
-            messageBox.setText("Ошибка: нельзя удалить пустую строку")
+            messageBox.setText('Ошибка: в списке не выбрана строка для удаления')
             messageBox.exec()
 
 
